@@ -11,91 +11,9 @@ import PostJobForm from '@/components/PostJobForm';
 import AuthModals from '@/components/AuthModals';
 import Footer from '@/components/Footer';
 
-// Sample job data
-const sampleJobs: Job[] = [
-  {
-    id: '1',
-    title: 'Senior Frontend Developer',
-    company: 'TechCorp Inc.',
-    location: 'San Francisco, CA',
-    salary: '$120,000 - $160,000',
-    type: 'full-time',
-    experience: '5+ years',
-    description: 'We are looking for a talented Senior Frontend Developer to join our growing team. You will be responsible for building and maintaining user-facing web applications using modern frameworks and tools.',
-    skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'GraphQL'],
-    postedDate: '2 days ago',
-    isBookmarked: false
-  },
-  {
-    id: '2',
-    title: 'Product Manager',
-    company: 'Innovation Labs',
-    location: 'New York, NY',
-    salary: '$110,000 - $140,000',
-    type: 'full-time',
-    experience: '3-5 years',
-    description: "Join our product team to drive the development of cutting-edge solutions. You'll work closely with engineering, design, and business stakeholders to deliver exceptional user experiences.",
-    skills: ['Product Strategy', 'Agile', 'Data Analysis', 'User Research', 'Roadmapping'],
-    postedDate: '1 day ago',
-    isBookmarked: false
-  },
-  {
-    id: '3',
-    title: 'UX/UI Designer',
-    company: 'DesignStudio Pro',
-    location: 'Remote',
-    salary: '$85,000 - $110,000',
-    type: 'remote',
-    experience: '3-5 years',
-    description: "Create beautiful and intuitive user experiences for our digital products. You'll collaborate with cross-functional teams to solve complex design challenges.",
-    skills: ['Figma', 'Adobe Creative Suite', 'Prototyping', 'User Research', 'Design Systems'],
-    postedDate: '3 days ago',
-    isBookmarked: true
-  },
-  {
-    id: '4',
-    title: 'Data Scientist Intern',
-    company: 'DataTech Solutions',
-    location: 'Austin, TX',
-    salary: '$25 - $35/hour',
-    type: 'internship',
-    experience: 'Fresher',
-    description: 'Get hands-on experience in data science and machine learning. Work on real projects with our experienced team and contribute to impactful solutions.',
-    skills: ['Python', 'Machine Learning', 'SQL', 'Pandas', 'Scikit-learn'],
-    postedDate: '5 days ago',
-    isBookmarked: false
-  },
-  {
-    id: '5',
-    title: 'Backend Engineer',
-    company: 'CloudTech Inc.',
-    location: 'Seattle, WA',
-    salary: '$95,000 - $130,000',
-    type: 'full-time',
-    experience: '3-5 years',
-    description: 'Build scalable backend systems and APIs. Work with modern cloud technologies to create robust and efficient server-side applications.',
-    skills: ['Node.js', 'Python', 'AWS', 'Docker', 'PostgreSQL'],
-    postedDate: '1 week ago',
-    isBookmarked: false
-  },
-  {
-    id: '6',
-    title: 'Marketing Specialist',
-    company: 'GrowthCo',
-    location: 'Los Angeles, CA',
-    salary: '$60,000 - $80,000',
-    type: 'part-time',
-    experience: '1-3 years',
-    description: 'Drive marketing initiatives and campaigns to help grow our brand. Work with digital marketing tools and analyze campaign performance.',
-    skills: ['Digital Marketing', 'SEO', 'Google Analytics', 'Content Marketing', 'Social Media'],
-    postedDate: '4 days ago',
-    isBookmarked: false
-  }
-];
-
 const Index = () => {
-  const [jobs, setJobs] = useState<Job[]>(sampleJobs);
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>(sampleJobs);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [isPostJobOpen, setIsPostJobOpen] = useState(false);
@@ -117,13 +35,29 @@ const Index = () => {
     industries: []
   });
 
+  // ✅ Fetch jobs from backend on mount
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/jobs/")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch jobs");
+        return res.json();
+      })
+      .then(data => {
+        setJobs(data);
+        setFilteredJobs(data);
+      })
+      .catch(err => {
+        console.error("Error fetching jobs:", err);
+      });
+  }, []);
+
   // Apply filters and search
   useEffect(() => {
     let filtered = [...jobs];
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(job => 
+      filtered = filtered.filter(job =>
         job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -131,7 +65,7 @@ const Index = () => {
     }
 
     if (searchLocation) {
-      filtered = filtered.filter(job => 
+      filtered = filtered.filter(job =>
         job.location.toLowerCase().includes(searchLocation.toLowerCase())
       );
     }
@@ -143,15 +77,16 @@ const Index = () => {
 
     // Experience level filter
     if (filters.experienceLevel.length > 0) {
-      filtered = filtered.filter(job => filters.experienceLevel.includes(job.experience.toLowerCase()));
+      filtered = filtered.filter(job =>
+        filters.experienceLevel.includes(job.experience.toLowerCase())
+      );
     }
 
     // Date posted filter (simplified for demo)
     if (filters.datePosted) {
-      // In a real app, you'd filter by actual dates
       filtered = filtered.filter(job => {
-        if (filters.datePosted === '24h') return job.postedDate.includes('hour') || job.postedDate.includes('1 day');
-        if (filters.datePosted === '7d') return !job.postedDate.includes('week');
+        if (filters.datePosted === '24h') return job.postedDate?.includes('hour') || job.postedDate?.includes('1 day');
+        if (filters.datePosted === '7d') return !job.postedDate?.includes('week');
         return true;
       });
     }
@@ -175,7 +110,7 @@ const Index = () => {
     setCurrentPage(1);
   }, [jobs, searchQuery, searchLocation, filters, sortBy]);
 
-  const getTimeValue = (timeString: string): number => {
+  const getTimeValue = (timeString: string = ''): number => {
     if (timeString.includes('hour')) return 1;
     if (timeString.includes('1 day')) return 2;
     if (timeString.includes('2 days')) return 3;
@@ -206,15 +141,31 @@ const Index = () => {
   };
 
   const handleBookmarkToggle = (jobId: string) => {
-    setJobs(prevJobs => 
-      prevJobs.map(job => 
-        job.id === jobId ? { ...job, isBookmarked: !job.isBookmarked } : job
-      )
-    );
+    // Call backend to toggle bookmark
+    fetch(`http://127.0.0.1:5000/api/jobs/${jobId}/bookmark`, { method: "PUT" })
+      .then(res => res.json())
+      .then(updatedJob => {
+        setJobs(prevJobs =>
+          prevJobs.map(job =>
+            job.id === jobId ? updatedJob : job
+          )
+        );
+      })
+      .catch(err => console.error("Error toggling bookmark:", err));
   };
 
   const handleJobPosted = (newJob: Job) => {
-    setJobs(prevJobs => [newJob, ...prevJobs]);
+    // Call backend to post job
+    fetch("http://127.0.0.1:5000/api/jobs/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newJob)
+    })
+      .then(res => res.json())
+      .then(savedJob => {
+        setJobs(prevJobs => [savedJob, ...prevJobs]);
+      })
+      .catch(err => console.error("Error posting job:", err));
   };
 
   const handleFilterChange = (newFilters: FilterState) => {
