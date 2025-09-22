@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Job Portal Design System - Professional & Modern */
+
+@layer base {
+  :root {
+    /* Core Brand Colors */
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
+    
+    /* Primary Brand - Professional Blue */
+    --primary: 220 91% 52%;
+    --primary-light: 220 91% 65%;
+    --primary-dark: 220 91% 42%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary Brand - Modern Purple */
+    --secondary: 263 85% 60%;
+    --secondary-light: 263 85% 70%;
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Accent Colors */
+    --accent: 142 76% 36%;
+    --accent-light: 142 76% 46%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Success & Status */
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Neutrals */
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+    
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 91% 52%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(220 14% 98%) 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(220 13% 18% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(220 13% 18% / 0.1), 0 2px 4px -1px hsl(220 13% 18% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(220 13% 18% / 0.1), 0 4px 6px -2px hsl(220 13% 18% / 0.05);
+    --shadow-brand: 0 10px 25px -5px hsl(var(--primary) / 0.3);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --radius-lg: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 13% 9%;
+    --foreground: 220 14% 96%;
+    
+    --primary: 220 91% 65%;
+    --primary-light: 220 91% 75%;
+    --primary-dark: 220 91% 52%;
+    --primary-foreground: 220 13% 9%;
+    
+    --secondary: 263 85% 70%;
+    --secondary-light: 263 85% 80%;
+    --secondary-foreground: 220 13% 9%;
+    
+    --accent: 142 76% 46%;
+    --accent-light: 142 76% 56%;
+    --accent-foreground: 220 13% 9%;
+    
+    --card: 220 13% 12%;
+    --card-foreground: 220 14% 96%;
+    --popover: 220 13% 12%;
+    --popover-foreground: 220 14% 96%;
+    
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 64%;
+    --border: 220 13% 18%;
+    --input: 220 13% 18%;
+    --ring: 220 91% 65%;
+    
+    --sidebar-background: 220 13% 12%;
+    --sidebar-foreground: 220 14% 96%;
+    --sidebar-primary: 220 91% 65%;
+    --sidebar-primary-foreground: 220 13% 9%;
+    --sidebar-accent: 220 13% 15%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 13% 18%;
+    --sidebar-ring: 220 91% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary-dark hover:to-secondary-light transition-all duration-300 font-medium shadow-md hover:shadow-brand;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-medium;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+  
+  .job-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .job-badge-primary {
+    @apply job-badge bg-primary/10 text-primary border border-primary/20;
+  }
+  
+  .job-badge-success {
+    @apply job-badge bg-accent/10 text-accent border border-accent/20;
+  }
+  
+  .job-badge-warning {
+    @apply job-badge bg-warning/10 text-warning border border-warning/20;
+  }
+}

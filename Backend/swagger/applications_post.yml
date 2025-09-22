@@ -1,0 +1,34 @@
+summary: "Create a new application"
+parameters:
+  - in: "body"
+    name: "body"
+    required: true
+    schema:
+      type: object
+      required:
+        - jobId
+        - userId
+        - resume
+      properties:
+        jobId:
+          type: string
+        userId:
+          type: string
+        resume:
+          type: string
+responses:
+  201:
+    description: "Application submitted successfully"
+    schema:
+      type: object
+      properties:
+        id:
+          type: string
+        jobId:
+          type: string
+        userId:
+          type: string
+        resume:
+          type: string
+        status:
+          type: string
