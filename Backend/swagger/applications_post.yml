@@ -1,34 +1,28 @@
-summary: "Create a new application"
-parameters:
-  - in: "body"
-    name: "body"
-    required: true
-    schema:
-      type: object
-      required:
-        - jobId
-        - userId
-        - resume
-      properties:
-        jobId:
-          type: string
-        userId:
-          type: string
-        resume:
-          type: string
-responses:
-  201:
-    description: "Application submitted successfully"
-    schema:
-      type: object
-      properties:
-        id:
-          type: string
-        jobId:
-          type: string
-        userId:
-          type: string
-        resume:
-          type: string
-        status:
-          type: string
+post:
+  tags:
+    - Applications
+  summary: Create a new job application
+  description: Apply for a job with a given userId and jobId.
+  consumes:
+    - application/json
+  parameters:
+    - in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          userId:
+            type: string
+            example: "a6f8f42d-2c3b-4a3f-b4e0-123456789abc"   # replace with a real userId from GET /api/users/
+          jobId:
+            type: string
+            example: "7d4c4bb1-334d-4672-8020-abc123ef4567"   # replace with a real jobId from GET /api/jobs/
+          status:
+            type: string
+            example: "submitted"
+  responses:
+    201:
+      description: Application created
+    400:
+      description: userId or jobId missing/invalid

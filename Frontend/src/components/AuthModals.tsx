@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 interface AuthModalsProps {
   isLoginOpen: boolean;
@@ -21,6 +22,7 @@ const AuthModals: React.FC<AuthModalsProps> = ({
   onSwitchToLogin,
 }) => {
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,19 +55,29 @@ const AuthModals: React.FC<AuthModalsProps> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: formData.username,
+          identifier: formData.username,
           password: formData.password,
         }),
       });
 
-      if (!res.ok) throw new Error("Login failed");
-
       const data = await res.json();
-      alert(`Welcome, ${data.user.username}!`);
-      onLoginClose();
-    } catch (err) {
-      console.error(err);
-      alert("Invalid username or password");
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      // ✅ Save JWT + user info
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      alert(`Welcome ${data.user.username}!`);
+
+  // ✅ Redirect to home and close modal
+      navigate("/");
+      onLoginClose();    ////this will redirect to home page and close the login modal
+    } catch (err: any) {
+      console.error("Login error:", err.message);
+      alert(`❌ ${err.message}`);
     }
   };
 
@@ -82,7 +94,9 @@ const AuthModals: React.FC<AuthModalsProps> = ({
             <Input name="email" type="email" placeholder="Email" onChange={handleChange} required />
             <Input name="password" type="password" placeholder="Password" onChange={handleChange} required />
             <Button type="submit" className="w-full">Register</Button>
-            <Button variant="ghost" type="button" onClick={onSwitchToLogin}>Already have an account? Login</Button>
+            <Button variant="ghost" type="button" onClick={onSwitchToLogin}>
+              Already have an account? Login
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -97,7 +111,9 @@ const AuthModals: React.FC<AuthModalsProps> = ({
             <Input name="username" placeholder="Username" onChange={handleChange} required />
             <Input name="password" type="password" placeholder="Password" onChange={handleChange} required />
             <Button type="submit" className="w-full">Login</Button>
-            <Button variant="ghost" type="button" onClick={onSwitchToSignup}>Don’t have an account? Sign up</Button>
+            <Button variant="ghost" type="button" onClick={onSwitchToSignup}>
+              Don’t have an account? Sign up
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
