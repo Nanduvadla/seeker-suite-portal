@@ -63,3 +63,20 @@ post:
             type: string
           password:
             type: string
+/profile:
+    get:
+      tags:
+        - Users
+      summary: "Get current logged-in user profile"
+      description: "Returns the profile of the currently authenticated user"
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "User profile returned successfully"
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          description: "Missing or invalid JWT token"
+        404:
+          description: "User not found"

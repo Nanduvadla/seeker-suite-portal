@@ -9,10 +9,10 @@ export interface Job {
   company: string;
   location: string;
   salary?: string;
-  type: 'full-time' | 'part-time' | 'contract' | 'internship' | 'remote';
+  type?: 'full-time' | 'part-time' | 'contract' | 'internship' | 'remote';
   experience: string;
   description: string;
-  skills: string[];
+  skills?: string[];
   postedDate: string;
   companyLogo?: string;
   isBookmarked?: boolean;
@@ -33,21 +33,24 @@ const JobCard: React.FC<JobCardProps> = ({ job, onJobClick, onBookmarkToggle }) 
     onBookmarkToggle(job.id);
   };
 
-  const getJobTypeBadge = (type: string) => {
-    const badges = {
-      'full-time': 'job-badge-primary',
-      'part-time': 'job-badge-success',
-      'contract': 'job-badge-warning',
-      'internship': 'job-badge-primary',
-      'remote': 'job-badge-success'
-    };
-    return badges[type as keyof typeof badges] || 'job-badge-primary';
+  const getJobTypeBadge = (type?: string) => {
+  const badges = {
+    'full-time': 'job-badge-primary',
+    'part-time': 'job-badge-success',
+    'contract': 'job-badge-warning',
+    'internship': 'job-badge-primary',
+    'remote': 'job-badge-success'
+  };
+  return type ? badges[type as keyof typeof badges] : 'job-badge-primary';
   };
 
-  const formatJobType = (type: string) => {
-    return type.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+
+  const formatJobType = (type?: string) => {
+  if (!type) return "Not specified"; // prevents crash
+  return type
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
   };
 
   return (
@@ -118,20 +121,29 @@ const JobCard: React.FC<JobCardProps> = ({ job, onJobClick, onBookmarkToggle }) 
         </p>
 
         <div className="flex flex-wrap gap-2 mb-4">
-          {job.skills.slice(0, 3).map((skill, index) => (
-            <span 
-              key={index}
-              className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md"
-            >
-              {skill}
-            </span>
+           {job.skills && job.skills.length > 0 ? (
+            <>
+           {job.skills.slice(0, 3).map((skill, index) => (
+           <span 
+           key={index}
+           className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md"
+           >
+          {skill}
+          </span>
           ))}
           {job.skills.length > 3 && (
-            <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md">
-              +{job.skills.length - 3} more
-            </span>
+          <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md">
+          +{job.skills.length - 3} more
+          </span>
           )}
-        </div>
+          </>
+          ) : (
+            <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md">
+           No skills listed
+           </span>
+          )}
+         </div>
+
 
         <div className="flex items-center justify-between">
           <Button 
